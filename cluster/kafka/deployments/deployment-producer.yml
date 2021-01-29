@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-deployment
+  labels:
+    app: kafka
+    type: producer
+spec:
+  template:
+    metadata:
+      name: producer-pod
+      labels:
+        app: kafka
+        type: producer
+    spec:
+      containers:
+      - name: producer
+        image: msimonipp/kafka-thd:v0
+  replicas: 1
+  selector:
+    matchLabels:
+      type: producer

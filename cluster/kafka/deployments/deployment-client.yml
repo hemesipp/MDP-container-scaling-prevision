@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-deployment
+  labels:
+    app: kafka
+    type: consumer
+spec:
+  template:
+    metadata:
+      name: consumer-pod
+      labels:
+        app: kafka
+        type: consumer
+    spec:
+      containers:
+      - name: consumer
+        image: msimonipp/kafka-thd-client:v0
+  replicas: 2
+  selector:
+    matchLabels:
+      type: consumer
