@@ -5,17 +5,17 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: kafka-broker
-  serviceName: kafka
+      app: kafkaa
+  serviceName: "kafkaa"
   replicas: 1
   podManagementPolicy: OrderedReady
   template:
     metadata:
       labels:
-        app: kafka-broker # has to match .spec.selector.matchLabels
+        app: kafkaa # has to match .spec.selector.matchLabels
     spec:
       containers:
-      - name: kafka
+      - name: kafkaa
         image: wurstmeister/kafka:2.11-2.0.1
         imagePullPolicy: IfNotPresent
         ports:

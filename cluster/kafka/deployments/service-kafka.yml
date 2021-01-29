@@ -1,14 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka
+  name: kafkaa
   labels:
-    app: kafka-broker
+    app: kafkaa
 spec:
   ports:
   - port: 9092
-    targetPort: 9092
-    protocol: TCP
+    name: plaintext
+  - port: 9999
+    name: jmx
+    #clusterIP: None
   selector:
-    app: kafka-broker
-  type: LoadBalancer
+    app: kafkaa
