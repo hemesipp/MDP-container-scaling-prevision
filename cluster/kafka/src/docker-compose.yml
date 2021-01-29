@@ -1,0 +1,53 @@
+version: '3.5'
+
+networks:
+  rmoff_kafka:
+    name: rmoff_kafka
+
+services:
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper
+    networks:
+      - rmoff_kafka
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  broker:
+    image: wurstmeister/kafka
+    container_name: broker
+    networks:
+      - rmoff_kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
+      KAFKA_LISTENERS: PLAINTEXT://broker:9092
+      KAFKA_CREATE_TOPICS: "topic_1:2:1"
+
+  producer:
+    image: producer:v0
+    container_name: producer
+    depends_on:
+      - broker
+    networks:
+      - rmoff_kafka
+
+  client1:
+    image: consumer:v0
+    container_name: consumer1
+    depends_on:
+      - producer
+    networks:
+      - rmoff_kafka
+
+  client2:
+    image: consumer:v0
+    container_name: consumer2
+    depends_on:
+      - producer
+    networks:
+      - rmoff_kafka
+
