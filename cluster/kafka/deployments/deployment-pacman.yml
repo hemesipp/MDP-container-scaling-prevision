@@ -31,7 +31,5 @@ spec:
         imagePullPolicy: Never
         ports:
         - containerPort: 5000
-    spec:
-      containers:
       - name: consumer
         image: msimonipp/kafka-thd-client:v0

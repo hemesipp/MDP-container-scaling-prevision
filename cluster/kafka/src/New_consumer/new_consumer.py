@@ -12,7 +12,7 @@ def netcat(hostname, port, content):
     while 1:
         time.sleep(3)
         data = s.recv(1024)
-        if data = ""
+        if data == "":
             break
         print("Received:", data.decode())
     print("Connection closed.")
