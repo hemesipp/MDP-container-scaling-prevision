@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: new-consumer-service
+spec:
+  selector:
+    app: new-consumer
+  ports:
+  - protocol: "TCP"
+    port: 5001
+    targetPort: 5000
+    nodePort: 30007
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-consumer
+spec:
+  selector:
+    matchLabels:
+      app: new-consumer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: new-consumer
+    spec:
+      containers:
+      - name: new-consumer
+        image: new-consumer:latest
+        imagePullPolicy: Never
+        resources:
+          requests:
+            memory: 300Mi
+            cpu: 500m
+        ports:
+        - containerPort: 5000

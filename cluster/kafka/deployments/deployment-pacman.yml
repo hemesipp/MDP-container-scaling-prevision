@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pacman-service
+spec:
+  selector:
+    app: pacman
+  ports:
+    - protocol: "TCP"
+      port: 6000
+      targetPort: 5000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pacman
+spec:
+  selector:
+    matchLabels:
+      app: pacman
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pacman
+    spec:
+      containers:
+      - name: pacman
+        image: flask:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+    spec:
+      containers:
+      - name: consumer
+        image: msimonipp/kafka-thd-client:v0
