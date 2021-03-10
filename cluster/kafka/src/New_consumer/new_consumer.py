@@ -1,8 +1,9 @@
 """request for packet"""
 
 import time
-import os
 import socket
+import requests
+import uvicorn
 
 def netcat(hostname, port, content):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,11 +19,6 @@ def netcat(hostname, port, content):
     print("Connection closed.")
     s.close()
 
-def main():
-    while True:
-        time.sleep(10)
-        os.system('nc hello-python-service 6000')
-        os.system('GET / HTTP/1.1')
 
 if __name__ == "__main__":
     while True:
@@ -33,5 +29,12 @@ if __name__ == "__main__":
         print("2")
         time.sleep(3)
         print("3")
+        """
+        uvicorn.run(pacman-service:app, host="0.0.0.0", port=6000)
+        """
+        r = requests.get('pacman-service:6000')
+        print(r)
+        """
         content="GET / HTTP/1.1"
         netcat("pacman-service", 6000, content.encode())
+        """

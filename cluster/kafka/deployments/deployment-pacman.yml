@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: pacman
-        image: flask:latest
+        image: pacman:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 5000
