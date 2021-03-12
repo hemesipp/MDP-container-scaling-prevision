@@ -5,5 +5,5 @@ WORKDIR /app
 ADD . /app/
 RUN pip install fastapi pydantic uvicorn
 
-EXPOSE 5000
+EXPOSE 80
 CMD ["python", "/app/pacman.py"]

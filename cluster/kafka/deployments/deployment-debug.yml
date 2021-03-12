@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: debug-deployment
+  name: debug
   labels:
     app: kafka
     type: debug
 spec:
   template:
     metadata:
-      name: debug-pod
+      name: debug
       labels:
         app: kafka
         type: debug
     spec:
       containers:
         - name: debug
-          image: ubuntu:latest
+          image: alpine:latest
   replicas: 1
   selector:
     matchLabels:

@@ -29,12 +29,19 @@ if __name__ == "__main__":
         print("2")
         time.sleep(3)
         print("3")
+
+        uvicorn.run(app, host="pacman", port=80)
+
+
         """
-        uvicorn.run(pacman-service:app, host="0.0.0.0", port=6000)
+        r = requests.get('http://10.97.61.219.app/')
+        print(r.status_code)
+        print(r.text)
         """
-        r = requests.get('pacman-service:6000')
-        print(r)
+
         """
-        content="GET / HTTP/1.1"
-        netcat("pacman-service", 6000, content.encode())
+        content="GET / HTTP/1.1" \
+                 "Host: 0.0.0.0"
+
+        netcat("pacman", 80, content.encode())
         """

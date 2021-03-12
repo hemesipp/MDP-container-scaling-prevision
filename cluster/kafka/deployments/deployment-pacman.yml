@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: pacman-service
+  name: pacman
 spec:
   selector:
     app: pacman
   ports:
     - protocol: "TCP"
-      port: 6000
-      targetPort: 5000
+      port: 80
+      targetPort: 80
 
 ---
 apiVersion: apps/v1
