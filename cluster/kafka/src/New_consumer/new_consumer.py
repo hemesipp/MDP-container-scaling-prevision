@@ -30,14 +30,14 @@ if __name__ == "__main__":
         time.sleep(3)
         print("3")
 
+        """
         uvicorn.run(app, host="pacman", port=80)
-
-
         """
-        r = requests.get('http://10.97.61.219.app/')
-        print(r.status_code)
+
+
+        r = requests.get("http://pacman:80/")
         print(r.text)
-        """
+
 
         """
         content="GET / HTTP/1.1" \

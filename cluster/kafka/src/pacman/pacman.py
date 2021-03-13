@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
-import time
+
+
+# import time
 
 
 class User(BaseModel):
@@ -18,11 +20,13 @@ async def create_user(user: User):
     return user
 
 
-@app.get("/")
-def root():
+@app.get("/")  #id of cnsumer in entry
+def job_handler():
     a = "a"
     b = "b" + a
+    #main()
     return {"hello world": b}
+
 
 """
 main est appelée à chaque nouvelle requete reçu
@@ -31,7 +35,6 @@ waiting_list: liste de new_consumer en attente
 nb_container_asked: valeur rendue par l'algo de prédiction
 nb_container: nombre de pods actifs
 """
-
 
 """
 def main(nb_container_asked, nb_container, waiting_list):
@@ -43,11 +46,11 @@ def main(nb_container_asked, nb_container, waiting_list):
             add_new_consumer(nb_container_asked)
             nb_container+=1
         if nb_container_asked==nb_container:
-            "send packet"
+            #Send packet
 """
 
 if __name__ == "__main__":
-    uvicorn.run("pacman:app", host="0.0.0.0", port=80)
+    uvicorn.run(app, host="0.0.0.0", port=80)
     """
     nb_container = 0
     While True:
@@ -55,4 +58,3 @@ if __name__ == "__main__":
         nb_container_asked = algo(param1, param2, nb_container)         
         main(nb_container_asked, nb_container, waiting_list)
     """
-
