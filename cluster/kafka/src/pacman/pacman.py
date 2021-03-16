@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
-
+import remove_new_consumer.py
+from random import *
+import add_new_consumer.py
 
 # import time
 
@@ -20,12 +22,25 @@ async def create_user(user: User):
     return user
 
 
-@app.get("/")  #id of cnsumer in entry
-def job_handler():
-    a = "a"
-    b = "b" + a
-    #main()
-    return {"hello world": b}
+@app.get("/{id}")  # id of consumer in entry
+
+def job_handler(id: int):
+    act_cons_list = [1, 13, 21]
+    nb_cons_wanted = 1
+    last_cons_id = 23
+    if nb_cons_wanted<len(act_cons_list):
+        remove_new_consumer(id)
+    else :
+        return{"message" : "first_job_id""}
+    r = random()
+    if r<0.1 :
+        nb_cons_wanted=randint(1, 10)
+        while(nb_cons_wanted>len(act_cons_list)) :
+            last_cons_id+=1
+            add_new_consumer.create_pod(last_cons_id)
+            act_cons_list.append(last_cons_id)
+    # main()
+    return {"id": id}
 
 
 """
