@@ -1,37 +1,35 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+import os
 import uvicorn
-import remove_new_consumer.py
 from random import *
-import add_new_consumer.py
-
+#import add_new_consumer.py
+#from kubernetes import client, config
 
 # import time
+"""
+def remove_pod(name):
+    config.load_kube_config()
 
+    api_instance = client.CoreV1Api()
 
-class User(BaseModel):
-    first_name: str
-    last_name: str = None
-    age: int
+    namespace = 'default'  # str
 
+    return api_instance.delete_namespaced_pod(name, namespace)
+"""
 
 app = FastAPI()
 
 
-@app.post("/user/", response_model=User)
-async def create_user(user: User):
-    return user
-
-
-@app.get("/{id}")  # id of consumer in entry
-def job_handler(id: int):
+@app.get("/{name}")  # id of consumer in entry
+def job_handler(name: str):
     act_cons_list = [1, 13, 21]
     nb_cons_wanted = 1
     last_cons_id = 23
     if nb_cons_wanted < len(act_cons_list):
-        remove_new_consumer.remove_pod(id)
+        os.system("python3 remove_new_consumer.py")
     else:
         return {"message": "first_job_id"}
+    """
     r = random()
     if r < 0.1:
         nb_cons_wanted = randint(1, 10)
@@ -40,7 +38,8 @@ def job_handler(id: int):
             add_new_consumer.create_pod(last_cons_id)
             act_cons_list.append(last_cons_id)
     # main()
-    return {"id": id}
+    """
+    return {"name": name}
 
 
 """

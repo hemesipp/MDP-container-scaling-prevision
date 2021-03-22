@@ -1,7 +1,7 @@
 """request for packet"""
-
 import time
 import socket
+import subprocess
 import requests
 import uvicorn
 
@@ -22,22 +22,16 @@ def netcat(hostname, port, content):
 
 if __name__ == "__main__":
     while True:
+        time.sleep(2)
         print("Go!")
-        time.sleep(7)
-        print("1")
-        time.sleep(5)
-        print("2")
-        time.sleep(3)
-        print("3")
+        time.sleep(2)
 
-        """
-        uvicorn.run(app, host="pacman", port=80)
-        """
+        bashCommandName = 'echo $HOSTNAME'
+        output = subprocess.check_output(['bash', '-c', bashCommandName])
 
-
-        r = requests.get("http://pacman:80/")
+        req = "http://pacman:80/" + output.decode()
+        r = requests.get(req)
         print(r.text)
-
 
         """
         content="GET / HTTP/1.1" \
