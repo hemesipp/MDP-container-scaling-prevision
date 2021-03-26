@@ -34,24 +34,27 @@ def create_pod(id):
 app = FastAPI()
 
 
-act_cons_list = [1, 13, 21]
+act_cons_list = [1]
 nb_cons_wanted = 4
-last_cons_id = 23
+last_cons_id = 1
 
 @app.get("/{name}")  # id of consumer in entry
 def job_handler(name: str):
-    """
-    r = random()
-    if r < 0.5:
-        nb_cons_wanted = randint(1, 10)
-    """
+    global act_cons_list
+    global nb_cons_wanted
     global last_cons_id
+    r = random()
+    if r < 0.1:
+        nb_cons_wanted = randint(1, 10)
     print(act_cons_list)
     print(nb_cons_wanted)
     print(last_cons_id)
     print(len(act_cons_list))
     if nb_cons_wanted < len(act_cons_list):
-        return remove_pod(name.rstrip('\n'))
+        real_name=name.rstrip('\n')
+        i = int(real_name[-1:])
+        del act_cons_list[i-1]
+        return remove_pod(real_name)
     else:
         while nb_cons_wanted > len(act_cons_list):
             last_cons_id += 1
