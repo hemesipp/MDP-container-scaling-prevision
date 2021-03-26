@@ -48,8 +48,8 @@ def job_handler(name: str):
         nb_cons_wanted = randint(1, 10)
     if nb_cons_wanted < len(act_cons_list):
         real_name=name.rstrip('\n')
-        i = int(real_name[-1:])
-        del act_cons_list[i-1]
+        i = act_cons_list.index(int(real_name[13:]))
+        del act_cons_list[i]
         return remove_pod(real_name)
     else:
         while nb_cons_wanted > len(act_cons_list):
