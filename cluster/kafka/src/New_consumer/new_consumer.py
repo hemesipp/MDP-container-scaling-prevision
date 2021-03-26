@@ -15,4 +15,6 @@ if __name__ == "__main__":
 
         req = "http://pacman:80/" + output.decode()
         r = requests.get(req)
+        if r.text=="Die":
+            break
         print(r.text)

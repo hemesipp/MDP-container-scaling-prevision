@@ -1,4 +1,5 @@
 from kubernetes import client, config
+import sys
 
 """
 config.load_kube_config()
@@ -15,13 +16,12 @@ print(api_response)
 
 
 def remove_pod(name):
-    config.load_kube_config()
+    config.load_incluster_config()
 
     api_instance = client.CoreV1Api()
 
     namespace = 'default'  # str
-
     return api_instance.delete_namespaced_pod(name, namespace)
 
 if __name__ == "__main__":
-    remove_pod("new-consumer-1")
+    remove_pod(sys.argv[1:][0])
