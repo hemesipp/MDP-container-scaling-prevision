@@ -16,7 +16,7 @@ class Producer(threading.Thread):
         i = 0
 
         try:
-            producer = kafka.KafkaProducer(bootstrap_servers='broker:9092')
+            producer = kafka.KafkaProducer(bootstrap_servers='broker-0.broker.default.svc.cluster.local:9092')
         except kafka.errors.NoBrokersAvailable:
             time.sleep(30)
             self.run()

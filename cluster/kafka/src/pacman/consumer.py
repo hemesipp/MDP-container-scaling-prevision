@@ -20,7 +20,7 @@ def main():
     consumer = create_consumer()
 
     for msg in consumer:
-        print(msg.value)
+        return msg.value
 
 
 if __name__ == "__main__":

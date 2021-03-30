@@ -3,8 +3,23 @@ import uvicorn
 from random import *
 from kubernetes import client, config
 import os
+import kafka
+import time
 
-# import time
+
+def new_consumer():
+    try:
+        consumer = kafka.KafkaConsumer('topic_1',
+                                       bootstrap_servers='broker:9092',
+                                       group_id='mygroup',
+                                       auto_offset_reset='earliest',
+                                       consumer_timeout_ms=10000)
+    except kafka.errors.NoBrokersAvailable:
+        time.sleep(30)
+        consumer = new_consumer()
+
+    return consumer
+
 
 def remove_pod(name):
     config.load_incluster_config()
@@ -45,6 +60,7 @@ def job_handler(name: str):
     global act_cons_list
     global nb_cons_wanted
     global last_cons_id
+    pcs = "empty"
     r = random()
     if r < 0.1:
         nb_cons_wanted = randint(1, 10)
@@ -54,14 +70,13 @@ def job_handler(name: str):
         del act_cons_list[i]
         os.system("python3 remove_new_consumer.py " + real_name)
         return "Die"
-        #ret_val = await remove_pod(real_name)
-        #return ret_val
     else:
         while nb_cons_wanted > len(act_cons_list):
             last_cons_id += 1
             act_cons_list.append(last_cons_id)
             os.system("python3 create_pod.py " + str(last_cons_id))
-        return {"message": "first_job_id"}
+        pcs = str(os.system("python3 consumer.py"))
+        return {"message": pcs}
 
 
 if __name__ == "__main__":
