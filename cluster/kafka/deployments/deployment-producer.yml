@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: producer
-        image: msimonipp/kafka-thd:v0
+        image: producer:latest
   replicas: 1
   selector:
     matchLabels:

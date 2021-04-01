@@ -1,6 +1,6 @@
 import threading
 import time
-
+import requests
 import kafka
 
 
@@ -22,7 +22,9 @@ class Producer(threading.Thread):
             self.run()
 
         while not self.stop_event.is_set():
-            producer.send('topic_1', ("ciao"+str(i)).encode())
+            producer.send('topic_1', ("ciao" + str(i)).encode())
+            offset = i + 1
+            requests.get("http://pacman:80/metrics/" + offset)
             print("I am alive boys")
             i += 1
             time.sleep(1)
@@ -45,4 +47,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

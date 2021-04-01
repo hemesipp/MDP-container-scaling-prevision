@@ -12,7 +12,7 @@ if __name__ == "__main__":
         bashCommandName = 'echo $HOSTNAME'
         output = subprocess.check_output(['bash', '-c', bashCommandName])
 
-        req = "http://pacman:80/" + output.decode()
+        req = "http://pacman:80/work/" + output.decode()
         r = requests.get(req)
         print(r.text)
         print(type(r.text))

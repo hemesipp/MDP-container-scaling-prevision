@@ -54,14 +54,17 @@ act_cons_list = [1]
 nb_cons_wanted = 4
 last_cons_id = 1
 consumer = new_consumer()
+output_offset = 0
+input_offset = 0
 
 
-@app.get("/{name}")  # id of consumer in entry
+@app.get("/work/{name}")  # id of consumer in entry
 def job_handler(name: str):
     global act_cons_list
     global nb_cons_wanted
     global last_cons_id
     global consumer
+    global output_offset
     r = random()
     if r < 0.1:
         nb_cons_wanted = randint(1, 10)
@@ -81,8 +84,29 @@ def job_handler(name: str):
         topic, value = list(record.items())[0]
         consumer.commit()
         consumer.pause()
+        output_offset = int(value[0][2]) + 1
         return {"message": value[0][6]}
+
+
+@app.get("/metrics/{offset}")
+def get_metrics(offset: int):
+    global input_offset
+    input_offset = offset
 
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=80)
+    global act_cons_list
+    global nb_cons_wanted
+    global last_cons_id
+    while True:
+        time.sleep(5)
+        print("-----METRICS-----")
+        nb_pod = len(act_cons_list)
+        nb_waiting_work = input_offset - output_offset
+        ratio = nb_waiting_work / nb_pod
+        #nb_cons_wanted = abs(nb_cons_wanted * ratio)
+        print("NB POD: " + str(nb_pod))
+        print("NB WAITING WORK: " + str(nb_waiting_work))
+        print("RATIO: " + str(ratio))
+        print("NB CONSUMER WANTED: " + str(nb_cons_wanted))
