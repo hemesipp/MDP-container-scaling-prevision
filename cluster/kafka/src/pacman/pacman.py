@@ -53,6 +53,7 @@ app = FastAPI()
 act_cons_list = [1]
 nb_cons_wanted = 4
 last_cons_id = 1
+consumer = new_consumer()
 
 
 @app.get("/{name}")  # id of consumer in entry
@@ -60,7 +61,7 @@ def job_handler(name: str):
     global act_cons_list
     global nb_cons_wanted
     global last_cons_id
-    pcs = "empty"
+    global consumer
     r = random()
     if r < 0.1:
         nb_cons_wanted = randint(1, 10)
@@ -75,8 +76,12 @@ def job_handler(name: str):
             last_cons_id += 1
             act_cons_list.append(last_cons_id)
             os.system("python3 create_pod.py " + str(last_cons_id))
-        pcs = str(os.system("python3 consumer.py"))
-        return {"message": pcs}
+        consumer.resume()
+        record = consumer.poll(max_records=1)
+        topic, value = list(record.items())[0]
+        consumer.commit()
+        consumer.pause()
+        return {"message": value[0][6]}
 
 
 if __name__ == "__main__":

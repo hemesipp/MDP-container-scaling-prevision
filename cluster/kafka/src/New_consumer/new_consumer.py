@@ -3,7 +3,6 @@ import time
 import subprocess
 import requests
 
-
 if __name__ == "__main__":
     while True:
         time.sleep(2)
@@ -15,6 +14,9 @@ if __name__ == "__main__":
 
         req = "http://pacman:80/" + output.decode()
         r = requests.get(req)
-        if r.text=="Die":
-            break
         print(r.text)
+        print(type(r.text))
+        print(r.text=="Die")
+        if r.text == "Die":
+            break
+    print("out of the loop")
