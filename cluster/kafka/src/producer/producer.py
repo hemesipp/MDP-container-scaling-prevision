@@ -24,7 +24,7 @@ class Producer(threading.Thread):
         while not self.stop_event.is_set():
             producer.send('topic_1', ("ciao" + str(i)).encode())
             offset = i + 1
-            requests.get("http://pacman:80/metrics/" + offset)
+            requests.get("http://pacman:80/metrics/" + str(offset))
             print("I am alive boys")
             i += 1
             time.sleep(1)

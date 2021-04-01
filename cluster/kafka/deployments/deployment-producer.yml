@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: producer-deployment
+  name: producer
   labels:
     app: kafka
     type: producer
@@ -16,6 +16,7 @@ spec:
       containers:
       - name: producer
         image: producer:latest
+        imagePullPolicy: Never
   replicas: 1
   selector:
     matchLabels:
