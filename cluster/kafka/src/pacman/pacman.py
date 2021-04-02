@@ -53,7 +53,7 @@ app = FastAPI()
 act_cons_list = [1]
 nb_cons_wanted = 4
 last_cons_id = 1
-consumer = new_consumer()
+kafka_consumer = new_consumer()
 output_offset = 0
 input_offset = 0
 
@@ -62,7 +62,7 @@ input_offset = 0
 def job_handler(name: str):
     global act_cons_list
     global last_cons_id
-    global consumer
+    global kafka_consumer
     global output_offset
     """
     r = random()
@@ -82,17 +82,17 @@ def job_handler(name: str):
                 last_cons_id += 1
                 act_cons_list.append(last_cons_id)
                 os.system("python3 create_pod.py " + str(last_cons_id))
-            consumer.resume()
-            record = consumer.poll(max_records=1)
+            kafka_consumer.resume()
+            record = kafka_consumer.poll(max_records=1)
             if list(record.items()):
                 topic, value = list(record.items())[0]
-                consumer.commit()
-                consumer.pause()
+                kafka_consumer.commit()
+                kafka_consumer.pause()
                 output_offset = int(value[0][2]) + 1
                 output = value[0][6]
             else:
                 output = "None"
-                consumer.pause()
+                kafka_consumer.pause()
             return {"message": output}
     else:
         return os.system("sleep 20")
