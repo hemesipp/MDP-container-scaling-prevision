@@ -1,0 +1,43 @@
+#Only for test
+
+#Create a deployment of one pod consuming from pacman
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: job-consumer
+spec:
+  selector:
+    app: job-consumer
+  ports:
+  - protocol: "TCP"
+    port: 5001
+    targetPort: 5000
+    nodePort: 30007
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-consumer
+spec:
+  selector:
+    matchLabels:
+      app: job-consumer
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: job-consumer
+    spec:
+      containers:
+      - name: job-consumer
+        image: job-consumer:latest
+        imagePullPolicy: Never
+        resources:
+          requests:
+            memory: 300Mi
+            cpu: 500m
+        ports:
+        - containerPort: 5000

@@ -1,3 +1,7 @@
+"""Only to test"""
+
+"""Kafka consumer"""
+
 import kafka
 import time
 
@@ -5,7 +9,7 @@ import time
 def create_consumer():
     try:
         consumer = kafka.KafkaConsumer('topic_1',
-                                       bootstrap_servers='broker:9092',
+                                       bootstrap_servers='broker-0.broker.default.svc.cluster.local:9092',
                                        group_id='mygroup',
                                        auto_offset_reset='earliest',
                                        consumer_timeout_ms=10000)

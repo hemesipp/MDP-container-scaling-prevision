@@ -1,0 +1,9 @@
+#Create a role to allow creation and deletion of pod
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-scale
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["create", "delete"]

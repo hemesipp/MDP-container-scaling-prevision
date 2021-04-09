@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pacman
+spec:
+  selector:
+    app: pacman
+  ports:
+    - protocol: "TCP"
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pacman
+spec:
+  selector:
+    matchLabels:
+      app: pacman
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pacman
+    spec:
+      containers:
+      - name: pacman
+        image: pacman:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
