@@ -8,9 +8,9 @@ def create_pod(id):
     v1 = client.CoreV1Api()
 
     pod = client.V1Pod()
-    pod.metadata = client.V1ObjectMeta(name="new-consumer-" + id, labels=dict(nb=id))
+    pod.metadata = client.V1ObjectMeta(name="job-consumer-" + id, labels=dict(nb=id))
 
-    container = client.V1Container(name="new-consumer-" + id, image="new-consumer:latest", image_pull_policy="Never")
+    container = client.V1Container(name="job-consumer-" + id, image="job-consumer:latest", image_pull_policy="Never")
 
     spec = client.V1PodSpec(containers=[container], restart_policy="Always")
     pod.spec = spec

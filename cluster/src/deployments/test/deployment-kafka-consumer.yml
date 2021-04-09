@@ -16,7 +16,7 @@ spec:
         type: consumer
     spec:
       containers:
-      - name: consumer
+      - name: kafka-consumer
         image: msimonipp/kafka-thd-client:v0
   replicas: 1
   selector:

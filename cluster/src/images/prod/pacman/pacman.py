@@ -15,9 +15,6 @@ Pacman is the one who scale the pods too. He uses the python API for kubernetes 
 from fastapi import FastAPI
 import uvicorn
 
-"""Python API for kubernetes"""
-from kubernetes import client, config
-
 """Kafka library"""
 import kafka
 
@@ -36,7 +33,7 @@ the arguments are: the read topic, the access to the broker, the group id, the o
 """
 
 
-def new_consumer():
+def kafka_consumer():
     try:
         consumer = kafka.KafkaConsumer('topic_1',
                                        bootstrap_servers='broker:9092',
@@ -45,7 +42,7 @@ def new_consumer():
                                        consumer_timeout_ms=10000)
     except kafka.errors.NoBrokersAvailable:
         time.sleep(30)
-        consumer = new_consumer()
+        consumer = kafka_consumer()
 
     return consumer
 
@@ -57,33 +54,32 @@ def new_consumer():
 Initialisation:
 
 Creation of 'app' : Fast Api entity
+Creation of 'kafka_consumer' : Kafka consumer entity
 
 Creation of global variables:
-act_cons_list:
-nb_cons_wanted:
-last_cons_id:
-kafka_consumer:
-output_offset:  
-input_offset:
+act_cons_list: list of active job consumer
+nb_cons_wanted: number of active job consumer needed
+last_cons_id: id of the last job consumer created
+output_offset: id of the last message consume from the kafka queue by pacman
+input_offset: id of the last message send by producer in the kafka queue
 """
 
 app = FastAPI()
+kafka_consumer = kafka_consumer()
 
 act_cons_list = [1]
-nb_cons_wanted = 4
+nb_cons_wanted = 1
 last_cons_id = 1
-kafka_consumer = new_consumer()
 output_offset = 0
 input_offset = 0
 
 """Definition of the answer to http request GET /work/{name}"""
 
 
-@app.get("/work/{name}")  # id of consumer in entry
+@app.get("/job/{name}")  # id of consumer in entry
 def job_handler(name: str):
     global act_cons_list
     global last_cons_id
-    global kafka_consumer
     global output_offset
     """
     # Only for test
@@ -97,7 +93,7 @@ def job_handler(name: str):
         if nb_cons_wanted < len(act_cons_list):  # Case where the pod requesting has to die
             i = act_cons_list.index(int(real_name[13:]))
             del act_cons_list[i]
-            os.system("python3 remove_new_consumer.py " + real_name)  # Run the python code killing a pod
+            os.system("python3 remove_job_consumer.py " + real_name)  # Run the python code killing a pod
             return "Die"
         else:  # Case where pacman has to send new job to the requesting pod
             while nb_cons_wanted > len(act_cons_list):  # Case where pacman has to create pods
@@ -128,8 +124,8 @@ def get_metrics(offset: int):
     global nb_cons_wanted
     input_offset = offset
     nb_pod = len(act_cons_list)
-    nb_waiting_work = input_offset - output_offset
-    ratio = nb_waiting_work / nb_pod
+    nb_waiting_job = input_offset - output_offset
+    ratio = nb_waiting_job / nb_pod
     nb_cons_estimated = round(nb_cons_wanted * ratio)
     """Upper and lower limits of the number of pods"""
     if nb_cons_estimated >= 10:
@@ -139,7 +135,7 @@ def get_metrics(offset: int):
     nb_cons_wanted = nb_cons_estimated
     print("-----METRICS-----")
     print("NB POD: " + str(nb_pod))
-    print("NB WAITING WORK: " + str(nb_waiting_work))
+    print("NB WAITING WORK: " + str(nb_waiting_job))
     print("RATIO: " + str(ratio))
     print("NB CONSUMER WANTED: " + str(nb_cons_wanted))
 

@@ -7,4 +7,4 @@ ADD . /app/
 RUN pip install requests
 
 #EXPOSE 9092
-CMD ["python","-u", "/app/new_consumer.py"]
+CMD ["python","-u", "/app/job_consumer.py"]

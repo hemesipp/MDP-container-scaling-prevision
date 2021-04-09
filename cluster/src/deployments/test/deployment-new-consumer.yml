@@ -5,10 +5,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: new-consumer-service
+  name: job-consumer
 spec:
   selector:
-    app: new-consumer
+    app: job-consumer
   ports:
   - protocol: "TCP"
     port: 5001
@@ -20,20 +20,20 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: new-consumer
+  name: job-consumer
 spec:
   selector:
     matchLabels:
-      app: new-consumer
+      app: job-consumer
   replicas: 1
   template:
     metadata:
       labels:
-        app: new-consumer
+        app: job-consumer
     spec:
       containers:
-      - name: new-consumer
-        image: new-consumer:latest
+      - name: job-consumer
+        image: job-consumer:latest
         imagePullPolicy: Never
         resources:
           requests:

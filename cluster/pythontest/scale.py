@@ -8,7 +8,7 @@ config.load_kube_config()
 
 # Enter a context with an instance of the API kubernetes.client
 api_instance = kubernetes.client.AppsV1Api()
-name = 'new-consumer'  # str | name of the Scale
+name = 'job-consumer'  # str | name of the Scale
 namespace = 'default'  # str | object name and auth scope, such as for teams and projects
 body = {"spec": {"replicas": 2}}  # object |
 
