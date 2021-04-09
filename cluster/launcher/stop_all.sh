@@ -1,0 +1,1 @@
+# delete all deployments, services, statefulsets and pods created
