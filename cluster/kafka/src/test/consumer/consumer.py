@@ -1,3 +1,7 @@
+"""Only to test"""
+
+"""Kafka consumer"""
+
 import kafka
 import time
 

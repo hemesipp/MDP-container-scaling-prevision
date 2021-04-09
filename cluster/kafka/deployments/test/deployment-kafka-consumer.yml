@@ -1,7 +1,9 @@
+#Only to test
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: consumer-deployment
+  name: kafka-consumer
   labels:
     app: kafka
     type: consumer
@@ -16,7 +18,7 @@ spec:
       containers:
       - name: consumer
         image: msimonipp/kafka-thd-client:v0
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       type: consumer

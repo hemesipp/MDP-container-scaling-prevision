@@ -1,3 +1,5 @@
+"""Producer sends jobs in the kafka queue"""
+
 import threading
 import time
 import requests
@@ -22,9 +24,9 @@ class Producer(threading.Thread):
             self.run()
 
         while not self.stop_event.is_set():
-            producer.send('topic_1', ("ciao" + str(i)).encode())
+            producer.send('topic_1', ("ciao" + str(i)).encode())  # Send a job in the kafka queue
             offset = i + 1
-            requests.get("http://pacman:80/metrics/" + str(offset))
+            requests.get("http://pacman:80/metrics/" + str(offset))  # Request pacman to tell him that a new job is in the queue
             print("I am alive boys")
             i += 1
             time.sleep(1)
