@@ -21,6 +21,7 @@ import kafka
 """Other library used"""
 import os
 import time
+import csv
 
 """Use for test"""
 # from random import *
@@ -72,7 +73,8 @@ nb_cons_wanted = 1
 last_cons_id = 1
 output_offset = 0
 input_offset = 0
-
+initial_output_timestamp = 0
+csvfile = open('logs.csv', 'w', newline='')
 """Definition of the answer to http request GET /work/{name}"""
 
 
@@ -81,6 +83,9 @@ def job_handler(name: str):
     global act_cons_list
     global last_cons_id
     global output_offset
+    global initial_output_timestamp
+    global normalize_output_timestamp
+    global csvfile
     """
     # Only for test
     r = random()
@@ -105,7 +110,14 @@ def job_handler(name: str):
             if list(record.items()):  # Ensures to have a message in the queue
                 topic, value = list(record.items())[0]  # extract the information from the queue record
                 kafka_consumer.commit()  # Remove the message consume from the queue
+                output_timestamp = int(value[0][3])
                 output_offset = int(value[0][2]) + 1  # Export the message offset from the queue record
+                if output_offset == 1:
+                    initial_output_timestamp=output_timestamp
+                normalize_output_timestamp = output_timestamp - initial_output_timestamp
+                spamwriter = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                spamwriter.writerow([normalize_output_timestamp])
+                os.system("cat logs.csv")
                 output = value[0][6]  # Export the message from the queue record
             else:  # Case where there is no more message in the queue
                 output = "None"
