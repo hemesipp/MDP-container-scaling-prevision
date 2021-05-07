@@ -74,7 +74,9 @@ last_cons_id = 1
 output_offset = 0
 input_offset = 0
 initial_output_timestamp = 0
-csvfile = open('logs.csv', 'w', newline='')
+#csvfile = open('logs.csv', 'w', newline='')
+
+
 """Definition of the answer to http request GET /work/{name}"""
 
 
@@ -84,8 +86,8 @@ def job_handler(name: str):
     global last_cons_id
     global output_offset
     global initial_output_timestamp
-    global normalize_output_timestamp
-    global csvfile
+    #global normalize_output_timestamp
+    #global csvfile
     """
     # Only for test
     r = random()
@@ -110,14 +112,14 @@ def job_handler(name: str):
             if list(record.items()):  # Ensures to have a message in the queue
                 topic, value = list(record.items())[0]  # extract the information from the queue record
                 kafka_consumer.commit()  # Remove the message consume from the queue
-                output_timestamp = int(value[0][3])
+                #output_timestamp = int(value[0][3])
                 output_offset = int(value[0][2]) + 1  # Export the message offset from the queue record
-                if output_offset == 1:
-                    initial_output_timestamp=output_timestamp
-                normalize_output_timestamp = output_timestamp - initial_output_timestamp
-                spamwriter = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-                spamwriter.writerow([normalize_output_timestamp])
-                os.system("cat logs.csv")
+                #if output_offset == 1:
+                #    initial_output_timestamp=output_timestamp
+                #normalize_output_timestamp = output_timestamp - initial_output_timestamp
+                #spamwriter = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                #spamwriter.writerow([normalize_output_timestamp])
+                #os.system("cat logs.csv")
                 output = value[0][6]  # Export the message from the queue record
             else:  # Case where there is no more message in the queue
                 output = "None"
@@ -134,22 +136,38 @@ def job_handler(name: str):
 def get_metrics(offset: int):
     global input_offset
     global nb_cons_wanted
+    global initial_time
+    global output_offset
+    TARGET=10
     input_offset = offset
     nb_pod = len(act_cons_list)
     nb_waiting_job = input_offset - output_offset
-    ratio = nb_waiting_job / nb_pod
-    nb_cons_estimated = round(nb_cons_wanted * ratio)
-    """Upper and lower limits of the number of pods"""
-    if nb_cons_estimated >= 10:
-        nb_cons_estimated = 10
-    elif nb_cons_estimated <= 1:
-        nb_cons_estimated = 1
-    nb_cons_wanted = nb_cons_estimated
+    err = nb_waiting_job - TARGET
+    K_p = 0.6
+    p_0 = 0
+    P_out = K_p*err + p_0
+    nb_cons_estimated = nb_pod + round(P_out)
+    if nb_cons_estimated<1:
+        nb_cons_wanted = 1
+    elif nb_cons_estimated>60:
+        nb_cons_wanted = 60
+    else:
+        nb_cons_wanted = nb_cons_estimated
     print("-----METRICS-----")
-    print("NB POD: " + str(nb_pod))
+    print("TARGET: " + str(TARGET))
     print("NB WAITING WORK: " + str(nb_waiting_job))
-    print("RATIO: " + str(ratio))
+    print("e(t): " + str(err))
+    print("K_p: " + str(K_p))
+    print("p_0: " + str(p_0))
+    print("P_out: " + str(P_out))
+    print("NB POD: " + str(nb_pod))
     print("NB CONSUMER WANTED: " + str(nb_cons_wanted))
+    if input_offset == 1:
+        initial_time= time.time()
+    real_time = time.time()-initial_time
+    with open('logs.csv', 'a', newline ='') as f:
+        ecrire=csv.writer(f)
+        ecrire.writerow([real_time,nb_cons_wanted, nb_pod, TARGET, nb_waiting_job])
 
 
 #######################################################################################################################
