@@ -4,7 +4,7 @@ FROM python:3.7
 #&& pip install kafka-python
 WORKDIR /app
 ADD . /app/
-RUN pip install requests
+RUN pip install --no-cache-dir -r requirements.txt
 
 #EXPOSE 9092
 CMD ["python","-u", "/app/job_consumer.py"]

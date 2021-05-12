@@ -2,12 +2,14 @@
 import time
 import subprocess
 import requests
+import numpy as np
+from random import *
 
 if __name__ == "__main__":
     while True:
-        time.sleep(2)
-        print("Go!")
-        time.sleep(5)
+        w = random()
+        t = 10*np.exp(w)
+        time.sleep(t)
 
         bashCommandName = 'echo $HOSTNAME'
         output = subprocess.check_output(['bash', '-c', bashCommandName])

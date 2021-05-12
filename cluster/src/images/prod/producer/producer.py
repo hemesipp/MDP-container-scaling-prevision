@@ -4,7 +4,8 @@ import threading
 import time
 import requests
 import kafka
-
+import numpy as np
+from random import *
 
 class Producer(threading.Thread):
     def __init__(self):
@@ -29,7 +30,9 @@ class Producer(threading.Thread):
             requests.get("http://pacman:80/metrics/" + str(offset))  # Request pacman to tell him that a new job is in the queue
             print("I am alive boys")
             i += 1
-            time.sleep(1)
+            w = random()
+            t = np.exp(w)
+            time.sleep(t)
 
         producer.close()
 
