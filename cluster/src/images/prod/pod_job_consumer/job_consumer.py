@@ -7,8 +7,10 @@ from random import *
 
 if __name__ == "__main__":
     while True:
-        w = random()
-        t = 10*np.exp(w)
+        #w = random()
+        #t = 10*np.exp(w)
+        b = 5.0
+        t = np.random.exponential(b)
         time.sleep(t)
 
         bashCommandName = 'echo $HOSTNAME'

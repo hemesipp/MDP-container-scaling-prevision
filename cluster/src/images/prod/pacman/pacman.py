@@ -25,6 +25,9 @@ import csv
 
 """Use for test"""
 # from random import *
+from simple_pid import PID
+import numpy as np
+
 
 #######################################################################################################################
 
@@ -82,7 +85,6 @@ initial_output_timestamp = 0
 @app.get("/job/{name}")  # id of consumer in entry
 def job_handler(name: str):
     global act_cons_list
-    global last_cons_id
     global output_offset
     global initial_output_timestamp
     """
@@ -92,18 +94,15 @@ def job_handler(name: str):
         nb_cons_wanted = randint(1, 10)
     """
     real_name = name.rstrip('\n')  # The string received from the http request as the format name\n
-
+    static_nb_cons_wanted = nb_cons_wanted
     if int(real_name[13:]) in act_cons_list:  # Ensures to not treat the dying pods
-        if nb_cons_wanted < len(act_cons_list):  # Case where the pod requesting has to die
+        if static_nb_cons_wanted < len(act_cons_list):  # Case where the pod requesting has to die
             i = act_cons_list.index(int(real_name[13:]))
             del act_cons_list[i]
             os.system("python3 remove_job_consumer.py " + real_name)  # Run the python code killing a pod
             return "Die"
         else:  # Case where pacman has to send new job to the requesting pod
-            while nb_cons_wanted > len(act_cons_list):  # Case where pacman has to create pods
-                last_cons_id += 1
-                act_cons_list.append(last_cons_id)
-                os.system("python3 create_pod.py " + str(last_cons_id))  # Run the python code creating pod
+
             kafka_consumer.resume()  # Wake up the kafka consumer entity
             record = kafka_consumer.poll(max_records=1)  # Consume only one record from the queue
             if list(record.items()):  # Ensures to have a message in the queue
@@ -125,33 +124,48 @@ def job_handler(name: str):
 @app.get("/metrics/{offset}")
 def get_metrics(offset: int):
     global input_offset
+    global last_cons_id
     global nb_cons_wanted
     global initial_time
     global output_offset
-    TARGET=10
+    TARGET=15
     input_offset = offset
     nb_pod = len(act_cons_list)
     nb_waiting_job = input_offset - output_offset
-    err = nb_waiting_job - TARGET
-    K_p = 0.09
-    p_0 = 0
-    P_out = K_p*err + p_0
-    nb_cons_estimated = nb_pod + round(P_out)
+    """
+    Proportional method
+    """
+    #err = nb_waiting_job - TARGET
+    #K_p = 0.09
+    #p_0 = 0
+    #P_out = K_p*err + p_0
+    #nb_cons_estimated = nb_pod + round(P_out)
+
+    """
+    PID method
+    """
+    pid = PID(Kp=-0.95, Ki=0.04, Kd=-0.02, setpoint=TARGET)
+    nb_cons_estimated = nb_pod + round(pid(nb_waiting_job))
+
     if nb_cons_estimated<1:
         nb_cons_wanted = 1
-    elif nb_cons_estimated>60:
-        nb_cons_wanted = 60
+    elif nb_cons_estimated>30:
+        nb_cons_wanted = 30
     else:
         nb_cons_wanted = nb_cons_estimated
     print("-----METRICS-----")
     print("TARGET: " + str(TARGET))
     print("NB WAITING WORK: " + str(nb_waiting_job))
-    print("e(t): " + str(err))
-    print("K_p: " + str(K_p))
-    print("p_0: " + str(p_0))
-    print("P_out: " + str(P_out))
+    #print("e(t): " + str(err))
+    #print("K_p: " + str(K_p))
+    #print("p_0: " + str(p_0))
+    #print("P_out: " + str(P_out))
     print("NB POD: " + str(nb_pod))
     print("NB CONSUMER WANTED: " + str(nb_cons_wanted))
+    while nb_cons_wanted > len(act_cons_list):  # Case where pacman has to create pods
+        last_cons_id += 1
+        act_cons_list.append(last_cons_id)
+        os.system("python3 create_pod.py " + str(last_cons_id))  # Run the python code creating pod
     if input_offset == 1:
         initial_time= time.time()
     real_time = time.time()-initial_time
