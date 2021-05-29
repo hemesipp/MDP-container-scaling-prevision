@@ -77,7 +77,8 @@ last_cons_id = 1
 output_offset = 0
 input_offset = 0
 initial_output_timestamp = 0
-
+TARGET=25
+pid = PID(Kp=-0.9, Ki=0, Kd=-0.2, setpoint=TARGET, sample_time=0.5)
 
 """Definition of the answer to http request GET /work/{name}"""
 
@@ -128,7 +129,8 @@ def get_metrics(offset: int):
     global nb_cons_wanted
     global initial_time
     global output_offset
-    TARGET=15
+    global pid
+
     input_offset = offset
     nb_pod = len(act_cons_list)
     nb_waiting_job = input_offset - output_offset
@@ -144,13 +146,13 @@ def get_metrics(offset: int):
     """
     PID method
     """
-    pid = PID(Kp=-0.95, Ki=0.04, Kd=-0.02, setpoint=TARGET)
+
     nb_cons_estimated = nb_pod + round(pid(nb_waiting_job))
 
     if nb_cons_estimated<1:
         nb_cons_wanted = 1
-    elif nb_cons_estimated>30:
-        nb_cons_wanted = 30
+    elif nb_cons_estimated>45:
+        nb_cons_wanted = 45
     else:
         nb_cons_wanted = nb_cons_estimated
     print("-----METRICS-----")
@@ -162,6 +164,7 @@ def get_metrics(offset: int):
     #print("P_out: " + str(P_out))
     print("NB POD: " + str(nb_pod))
     print("NB CONSUMER WANTED: " + str(nb_cons_wanted))
+    print("PID: " + str(pid(nb_waiting_job)))
     while nb_cons_wanted > len(act_cons_list):  # Case where pacman has to create pods
         last_cons_id += 1
         act_cons_list.append(last_cons_id)
