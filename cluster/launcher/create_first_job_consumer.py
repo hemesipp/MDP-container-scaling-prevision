@@ -1,4 +1,5 @@
 from kubernetes import client, config
+import time
 from kubernetes.client.models import V1Pod, V1ObjectMeta, V1Container, V1PodSpec
 
 

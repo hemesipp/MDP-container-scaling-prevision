@@ -4,7 +4,8 @@ import threading
 import time
 import requests
 import kafka
-
+import numpy as np
+from random import *
 
 class Producer(threading.Thread):
     def __init__(self):
@@ -24,12 +25,16 @@ class Producer(threading.Thread):
             self.run()
 
         while not self.stop_event.is_set():
-            producer.send('topic_1', ("ciao" + str(i)).encode())  # Send a job in the kafka queue
+ # Send a job in the kafka queue
             offset = i + 1
             requests.get("http://pacman:80/metrics/" + str(offset))  # Request pacman to tell him that a new job is in the queue
-            print("I am alive boys")
+            producer.send('topic_1', ("ciao" + str(i)).encode())
             i += 1
-            time.sleep(1)
+            #w = random()
+            #t = np.exp(w)
+            b = 1.0
+            t = np.random.exponential(b)
+            time.sleep(t)
 
         producer.close()
 

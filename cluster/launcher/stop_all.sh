@@ -7,3 +7,5 @@ kubectl delete deployment zookeeper
 kubectl delete service broker
 kubectl delete service zookeeper-service
 kubectl delete pods --all
+kubectl delete clusterrole pods-scale
+kubectl delete clusterrolebinding pods-scale
